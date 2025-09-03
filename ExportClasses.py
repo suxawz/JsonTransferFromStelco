@@ -50,9 +50,32 @@ class Analysis_perc:
         self.N2 = N2
         self.O2 = O2
 class Scrap:
-    def __init__(self, Weight_kg,Type):
-        self.Weight_kg = Weight_kg
-        self.Type = Type  
+    def __init__(self, SumWeight_kg,HomeScrap,PAnds,PitScrap,PrimeBundles,Shred,SlabCrops):
+        self.SumWeight_kg = SumWeight_kg
+        self.HomeScrap = HomeScrap  
+        self.PAnds = PAnds
+        self.PitScrap = PitScrap
+        self.PrimeBundles = PrimeBundles
+        self.Shred = Shred
+        self.SlabCrops = SlabCrops
+class HomeScrap:
+    def __init__(self,Weight_kg):
+        self.Weight_kg =   Weight_kg       
+class PAnds:
+    def __init__(self,Weight_kg):
+        self.Weight_kg =   Weight_kg  
+class PitScrap:
+    def __init__(self,Weight_kg):
+        self.Weight_kg =   Weight_kg  
+class PrimeBundles:
+    def __init__(self,Weight_kg):
+        self.Weight_kg =   Weight_kg  
+class Shred:
+    def __init__(self,Weight_kg):
+        self.Weight_kg =   Weight_kg  
+class SlabCrops:
+    def __init__(self,Weight_kg):
+        self.Weight_kg =   Weight_kg          
 class ActualData:
     def __init__(self, Series_SampleAnalysis, Series_WasteGas,WasteGasEOB):
         self.Series_SampleAnalysis = Series_SampleAnalysis

@@ -48,16 +48,7 @@ def process_json_file(input_file, json_output_file, csv_output_file, excel_outpu
     save_dataframe_to_excel(df, excel_output_file)
 
 
-def replace_nan_with_none(obj):
-    if isinstance(obj, dict):
-        return {k: replace_nan_with_none(v) for k, v in obj.items()}
-    elif isinstance(obj, list):
-        return [replace_nan_with_none(item) for item in obj]
-    elif isinstance(obj, float) and math.isnan(obj):
-        return None
-    else:
-        return obj
-  
+ 
 if __name__ == "__main__":
     df_Performance = readJsonfile(folder_path='C:\Drive_D\Stelco-BOF\Statics-Python\JsonTransferFromStelco\static\PerformanceValue')
     df_CyclicTrend = readJsonfile(folder_path='C:\Drive_D\Stelco-BOF\Statics-Python\JsonTransferFromStelco\static\TrendValue')
@@ -67,8 +58,12 @@ if __name__ == "__main__":
     json_data = json.dumps(heats, default=lambda o: o.__dict__, indent=4)
 
     data = json.loads(json_data)
+    
     data = replace_nan_with_none(data)  
-    json_data = json.dumps(data, default=lambda o: o.__dict__, indent=4)
+    data =remove_null_properties(data)  
+    json_data = json.dumps(data,allow_nan=False, default=lambda o: o.__dict__, indent=4)
+
+    json_data =  '{"Heats": ' + json_data + '}'
     now = datetime.now()
     filename_now = now.strftime("%Y-%m-%d_%H-%M-%S")+'.json'
     filepath = Path('C:\Drive_D\Stelco-BOF\Statics-Python\JsonTransferFromStelco\Export') / filename_now

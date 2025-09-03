@@ -115,9 +115,9 @@ def json_to_classes(df_Performance,df_CyclicTrend,df_SteelGrade):
     for heat_data_Performance in df_Performance.itertuples(index = True,name = 'pandas'):
         
         heatInfo = EC.HeatInfo(
-            BOFCalculationID=heat_data_Performance.ModelHeatID,
+            BOFCalculationID=heat_data_Performance.BOFCalculationID,
             TreatmentStartTime=heat_data_Performance.CalculationTime,
-            HeatID=heat_data_Performance.BOFCalculationID,
+            HeatID=heat_data_Performance.HeatNumber,
             Cast_ID=heat_data_Performance.ModelCastingLadle
         )
 
@@ -141,12 +141,19 @@ def json_to_classes(df_Performance,df_CyclicTrend,df_SteelGrade):
             Weight_kg=heat_data_Performance.ActHotMetalWeight,
             Analysis_perc=analysis_perc
         )
-        scrap_list =  []
-        scrap_list.append(EC.Scrap(Weight_kg=heat_data_Performance.ActTotal,Type="ActTotal"))
+        
+        scrap = EC.Scrap(SumWeight_kg=heat_data_Performance.ActTotal,
+                         HomeScrap=EC.HomeScrap(heat_data_Performance.ActHomeScrap),
+                         PAnds=EC.PAnds(heat_data_Performance.ActPAndS),
+                         PitScrap=EC.PitScrap(heat_data_Performance.ActPitScrap),
+                         PrimeBundles=EC.PrimeBundles(heat_data_Performance.ActPrimeBundles),
+                         Shred=EC.Shred(heat_data_Performance.ActShred),
+                         SlabCrops=EC.SlabCrops(heat_data_Performance.ActSlabCrops)
+                         )
 
         input_obj = EC.Input(
             HotMetal=hotMetal,
-            Scrap=scrap_list
+            Scrap=scrap
         )
         mix = EC.Mix(
             EC.Analysis_perc(
@@ -298,3 +305,19 @@ def json_to_dataframe(data):
         records.append(record)
     df = pd.DataFrame(records)  
     return df
+def replace_nan_with_none(obj):
+    if isinstance(obj, dict):
+        return {k: replace_nan_with_none(v) for k, v in obj.items()}
+    elif isinstance(obj, list):
+        return [replace_nan_with_none(item) for item in obj]
+    elif isinstance(obj, float) and math.isnan(obj):
+        return None
+    else:
+        return obj
+def remove_null_properties(obj):
+    if isinstance(obj, dict):
+        return {k: remove_null_properties(v) for k, v in obj.items() if v is not None}
+    elif isinstance(obj, list):
+        return [remove_null_properties(x) for x in obj]
+    else:
+        return obj 
