@@ -59,6 +59,25 @@ def add_seconds_to_timestr(time_str, seconds, input_format="%Y-%m-%d %H:%M:%S", 
     dt = datetime.strptime(time_str, input_format)
     new_dt = dt + timedelta(seconds=seconds)
     return new_dt.strftime(output_format)
+def get_series_Aims(df_SteelGrade,GradeName):
+    ListElements = ['C','Si','Mn','P','S','Al','Cu']
+    series_Aims_data = []
+    df_Result = df_SteelGrade.loc[df_SteelGrade['GradeNumber'] == GradeName]
+   
+    for index, row in df_Result.iterrows():
+        for Element in ListElements:
+            Aims = EC.Aims()
+            Aims.Element = Element
+            Name = Element + 'InternalAim'
+            Aims.Aim = row[Name]
+            Name = Element + 'InternalMax'
+            Aims.Max = row[Name]
+            Name = Element + 'InternalMin'
+            Aims.Min = row[Name]
+            series_Aims_data.append(Aims)   
+    return series_Aims_data
+
+
 def get_series_wastegas(df_CyclicTrend,HeatID,StartTime,EndTime):
     series_WasteGase_data = []
     cyclic_delta = 10
@@ -120,8 +139,8 @@ def json_to_classes(df_Performance,df_CyclicTrend,df_SteelGrade):
             HeatID=heat_data_Performance.HeatNumber,
             Cast_ID=heat_data_Performance.ModelCastingLadle
         )
-
-        grade = EC.Grade(SteelGrade=heat_data_Performance.Grade)
+        series_Aim_data = get_series_Aims(df_SteelGrade,heat_data_Performance.Grade)
+        grade = EC.Grade(GradeNumber=heat_data_Performance.Grade,Name=heat_data_Performance.Grade,Description=None,Aims=series_Aim_data)
         aim = EC.Aim(
             Grade=grade,
             CarbonAfterBlowing_perc=heat_data_Performance.AimAnalEOBC,

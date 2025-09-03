@@ -26,8 +26,18 @@ class Aim:
         self.PhosphorusAtTapping_perc = PhosphorusAtTapping_perc
         self.Temperature_C = Temperature_C
 class Grade:
-    def __init__(self, SteelGrade):
-        self.SteelGrade = SteelGrade     
+    def __init__(self, GradeNumber,Description,Name,Aims):
+        self.Name = Name 
+        self.GradeNumber = GradeNumber
+        self.Description = Description
+        self.Aims = Aims
+class Aims:
+    def __init__(self,Element=None,Aim=None,Min=None,Max=None):
+        self.Element = Element
+        self.Aim = Aim
+        self.Min = Min
+        self.Max = Max
+
 class Input:
     def __init__(self, HotMetal, Scrap):
         self.HotMetal = HotMetal
