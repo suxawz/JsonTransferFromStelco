@@ -264,6 +264,7 @@ def json_to_Parametersclasses(df_Parameters,df_ParametersMitrix):
      ParametersList = []
      for Parameter in df_Parameters.itertuples(index = True,name = 'pandas'):
         ParameterEntries = getParameterEntries(df_ParametersMitrix,Parameter.BOFModelParameterID)
+        Entries = EC.DynamicClass(a=None)
         Parameter = EC.Parameters(
             BOFModelParameterID=Parameter.BOFModelParameterID,
             Name=Parameter.PNAME,
@@ -278,8 +279,9 @@ def json_to_Parametersclasses(df_Parameters,df_ParametersMitrix):
             Min=Parameter.MIN_VALUE,
             Entries=ParameterEntries
         )
+        Entries.Add(**{ Parameter.Name: Parameter})
         #parameter = {Parameter.Name,Parameter}
-        ParametersList.append(Parameter)
+        ParametersList.append(Entries)
      return ParametersList  
 def getMaterialGroupsEntries(df_MaterialMap,MaterialID):
     MaterialGroupEntriesList = []
