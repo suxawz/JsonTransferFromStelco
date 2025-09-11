@@ -50,28 +50,77 @@ def process_json_file(input_file, json_output_file, csv_output_file, excel_outpu
 
  
 if __name__ == "__main__":
-    df_Performance = readJsonfile(folder_path='C:\Drive_D\Stelco-BOF\Statics-Python\JsonTransferFromStelco\static\PerformanceValue')
-    df_CyclicTrend = readJsonfile(folder_path='C:\Drive_D\Stelco-BOF\Statics-Python\JsonTransferFromStelco\static\TrendValue')
-    df_SteelGrade = readJsonfile(folder_path='C:\Drive_D\Stelco-BOF\Statics-Python\JsonTransferFromStelco\static\SteelGrade')
-    heats = json_to_classes(df_Performance,df_CyclicTrend,df_SteelGrade)
+    #functionstr = "PerformanceReport"
+    functionstr = "Materials"
+    #functionstr = "Parameters"
+    if(functionstr == "PerformanceReport"):
+        df_Performance = readJsonfile(folder_path='C:\Drive_D\Stelco-BOF\Statics-Python\JsonTransferFromStelco\static\PerformanceValue')
+        df_CyclicTrend = readJsonfile(folder_path='C:\Drive_D\Stelco-BOF\Statics-Python\JsonTransferFromStelco\static\TrendValue')
+        df_SteelGrade = readJsonfile(folder_path='C:\Drive_D\Stelco-BOF\Statics-Python\JsonTransferFromStelco\static\SteelGrade')
+        heats = json_to_classes(df_Performance,df_CyclicTrend,df_SteelGrade)
 
-    json_data = json.dumps(heats, default=lambda o: o.__dict__, indent=4)
+        json_data = json.dumps(heats, default=lambda o: o.__dict__, indent=4)
 
-    data = json.loads(json_data)
+        data = json.loads(json_data)
     
-    data = replace_nan_with_none(data)  
-    data =remove_null_properties(data)  
-    json_data = json.dumps(data,allow_nan=False, default=lambda o: o.__dict__, indent=4)
+        data = replace_nan_with_none(data)  
+        data =remove_null_properties(data)  
+        json_data = json.dumps(data,allow_nan=False, default=lambda o: o.__dict__, indent=4)
 
-    json_data =  '{"Heats": ' + json_data + '}'
-    now = datetime.now()
-    filename_now = now.strftime("%Y-%m-%d_%H-%M-%S")+'.json'
-    filepath = Path('C:\Drive_D\Stelco-BOF\Statics-Python\JsonTransferFromStelco\Export') / filename_now
-    filepath.parent.mkdir(parents=True, exist_ok=True)
-    with open(filepath, 'w',encoding='utf-8') as file:
-        file.write(json_data)
+        json_data =  '{"Heats": ' + json_data + '}'
+        now = datetime.now()
+        filename_now = now.strftime("%Y-%m-%d_%H-%M-%S")+'.json'
+        filepath = Path('C:\Drive_D\Stelco-BOF\Statics-Python\JsonTransferFromStelco\Export') / filename_now
+        filepath.parent.mkdir(parents=True, exist_ok=True)
+        with open(filepath, 'w',encoding='utf-8') as file:
+            file.write(json_data)
  
+    if(functionstr == "Parameters"):
+        df_Parameters = readJsonfile(folder_path='C:\Drive_D\Stelco-BOF\Statics-Python\JsonTransferFromStelco\static\Parameters\Parameters')
+        df_ParametersMitrix = readJsonfile(folder_path='C:\Drive_D\Stelco-BOF\Statics-Python\JsonTransferFromStelco\static\Parameters\ParametersMitrix')
+        Parameters = json_to_Parametersclasses(df_Parameters,df_ParametersMitrix)
+
+        json_data = json.dumps(Parameters, default=lambda o: o.__dict__, indent=4)
+
+        data = json.loads(json_data)
     
+        data = replace_nan_with_none(data)  
+        data =remove_null_properties(data)  
+        json_data = json.dumps(data,allow_nan=False, default=lambda o: o.__dict__, indent=4)
+        json_data =  '{"Version": null,"Name":"SMM BOF model - Stelco","Parameters": ' + json_data + '}'
+        json_data =  '{"Model": ' + json_data + '}'
+
+        now = datetime.now()
+        filename_now = now.strftime("%Y-%m-%d_%H-%M-%S")+'.json'
+        filepath = Path('C:\Drive_D\Stelco-BOF\Statics-Python\JsonTransferFromStelco\Export') / filename_now
+        filepath.parent.mkdir(parents=True, exist_ok=True)
+        with open(filepath, 'w',encoding='utf-8') as file:
+            file.write(json_data)
+    if(functionstr == "Materials"):
+        df_MaterialMaster = readJsonfile(folder_path='C:\Drive_D\Stelco-BOF\Statics-Python\JsonTransferFromStelco\static\Materials\MaterialMaster')
+        df_MaterialMap = readJsonfile(folder_path='C:\Drive_D\Stelco-BOF\Statics-Python\JsonTransferFromStelco\static\Materials\MaterialMap')
+        df_MaterialElement = readJsonfile(folder_path='C:\Drive_D\Stelco-BOF\Statics-Python\JsonTransferFromStelco\static\Materials\MaterialElement')
+        Materials = json_to_Materialclasses(df_MaterialMaster,df_MaterialMap,df_MaterialElement)
+
+        json_data = json.dumps(Materials, default=lambda o: o.__dict__, indent=4)
+
+        data = json.loads(json_data)
+    
+        data = replace_nan_with_none(data)  
+        data =remove_null_properties(data)  
+        json_data = json.dumps(data,allow_nan=False, default=lambda o: o.__dict__, indent=4)
+        #json_data =  '{"Version": null,"Name":"SMM BOF model - Stelco","Parameters": ' + json_data + '}'
+        json_data =  '{"Materials": ' + json_data + '}'
+
+        now = datetime.now()
+        filename_now = now.strftime("%Y-%m-%d_%H-%M-%S")+'.json'
+        filepath = Path('C:\Drive_D\Stelco-BOF\Statics-Python\JsonTransferFromStelco\Export') / filename_now
+        filepath.parent.mkdir(parents=True, exist_ok=True)
+        with open(filepath, 'w',encoding='utf-8') as file:
+            file.write(json_data)
+
+                           
+
 
                            
 

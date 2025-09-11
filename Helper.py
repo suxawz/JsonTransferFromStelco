@@ -92,7 +92,7 @@ def get_series_wastegas(df_CyclicTrend,HeatID,StartTime,EndTime):
             EndTime = add_seconds_to_timestr(StartTime,1200)
     else:
         if(StartTime == None):
-            StartTime = add_seconds_to_timestr(StartTime,-1200)     
+            StartTime = add_seconds_to_timestr(EndTime,-1200)     
         
 
         
@@ -140,7 +140,7 @@ def json_to_classes(df_Performance,df_CyclicTrend,df_SteelGrade):
             Cast_ID=heat_data_Performance.ModelCastingLadle
         )
         series_Aim_data = get_series_Aims(df_SteelGrade,heat_data_Performance.Grade)
-        grade = EC.Grade(GradeNumber=heat_data_Performance.Grade,Name=heat_data_Performance.Grade,Description=None,Aims=series_Aim_data)
+        grade = EC.Grade(GradeNumber=heat_data_Performance.Grade,SteelGrade=heat_data_Performance.Grade,Description=None,Aims=series_Aim_data)
         aim = EC.Aim(
             Grade=grade,
             CarbonAfterBlowing_perc=heat_data_Performance.AimAnalEOBC,
@@ -245,6 +245,85 @@ def json_to_classes(df_Performance,df_CyclicTrend,df_SteelGrade):
         heats_list.append(heat)
     return heats_list  
 #### 
+def getParameterEntries(df_ParametersMitrix,BOFModelParameterID):
+    ParametersEntriesList = []
+    df_Result = df_ParametersMitrix.loc[df_ParametersMitrix['BOFModelParameterID'] == BOFModelParameterID]
+   
+    for index, row in df_Result.iterrows():
+        Entries = EC.Entries()
+        Entries.BOFModelParameterMatrixID = row['BOFModelParameterMatrixID']
+        Entries.Key1 = row["KEY1"]
+        Entries.Key2 = row["KEY2"]
+        Entries.Value = row["VALUE"]
+
+        ParametersEntriesList.append(Entries)   
+    return ParametersEntriesList
+
+    
+def json_to_Parametersclasses(df_Parameters,df_ParametersMitrix):
+     ParametersList = []
+     for Parameter in df_Parameters.itertuples(index = True,name = 'pandas'):
+        ParameterEntries = getParameterEntries(df_ParametersMitrix,Parameter.BOFModelParameterID)
+        Parameter = EC.Parameters(
+            BOFModelParameterID=Parameter.BOFModelParameterID,
+            Name=Parameter.PNAME,
+            UnitgroupNumber=Parameter.UNITGROUP_NO,
+            PracticeNumber=Parameter.PRAC_NO,
+            Type=Parameter.TYPE,
+            Value=Parameter.VALUE,
+            IsActive=Parameter.INST_ACTV,
+            IsDialog=Parameter.DIALOG_PARAM,
+            Conversion=Parameter.CONV,
+            Max=Parameter.MAX_VALUE,
+            Min=Parameter.MIN_VALUE,
+            Entries=ParameterEntries
+        )
+        #parameter = {Parameter.Name,Parameter}
+        ParametersList.append(Parameter)
+     return ParametersList  
+def getMaterialGroupsEntries(df_MaterialMap,MaterialID):
+    MaterialGroupEntriesList = []
+    df_Result = df_MaterialMap.loc[df_MaterialMap['MaterialID'] == MaterialID]
+   
+    for index, row in df_Result.iterrows():
+
+        MaterialGroupEntriesList.append(row["InternalName"])   
+    return MaterialGroupEntriesList
+def getMaterialAnalysis(df_MaterialElement,MaterialID):
+    df_Result = df_MaterialElement.loc[df_MaterialElement['MaterialID'] == MaterialID]
+    analysis = df_Result[["Name","Content"]]
+    Entries = EC.DynamicClass(a=None)
+    for index, row in analysis.iterrows():
+       ElementName = row["Name"]
+       Content = row["Content"]
+       Entries.Add(**{ ElementName: Content})
+
+    return Entries
+
+def json_to_Materialclasses(df_MaterialMaster,df_MaterialMap,df_MaterialElement):
+    MaterialsList = []
+    for Material in df_MaterialMaster.itertuples(index = True,name = 'pandas'):
+        GroupsEntries = getMaterialGroupsEntries(df_MaterialMap,Material.MaterialID)
+        Materialanalysis = getMaterialAnalysis(df_MaterialElement,Material.MaterialID)
+        MaterialItem = EC.Material(
+            Material_ID=Material.MaterialID,
+            IsAvailable=Material.Status,
+            Groups=GroupsEntries,
+            Type=Material.MaterialTypeID,
+            ChemicalEfficiency_perc=Material.Yield,
+            DisplayName=Material.Name,
+            Description=Material.Description,
+            Enthalpy_kJ_at1600C=Material.Enthalpy,
+            Price=Material.Price,
+            Density_kg_m3=Material.SpecificWeight,
+            BulkDensity_kg_m3=Material.BulkWeight,
+            BaseElement=Material.BasicElement,
+            Analysis_perc=Materialanalysis
+        )
+        #parameter = {Parameter.Name,Parameter}
+        MaterialsList.append(MaterialItem)
+    return MaterialsList  
+
 def json_to_dataframe(data):
     heats = json_to_classes(data)
     records = []

@@ -26,8 +26,8 @@ class Aim:
         self.PhosphorusAtTapping_perc = PhosphorusAtTapping_perc
         self.Temperature_C = Temperature_C
 class Grade:
-    def __init__(self, GradeNumber,Description,Name,Aims):
-        self.Name = Name 
+    def __init__(self, GradeNumber,Description,SteelGrade,Aims):
+        self.SteelGrade = SteelGrade 
         self.GradeNumber = GradeNumber
         self.Description = Description
         self.Aims = Aims
@@ -144,7 +144,52 @@ class WasteGasEOB:
         self.EOBCO = EOBCO
         self.EOBCO2 = EOBCO2
         EOBDetectionLog = EOBDetectionLog
-
+class Parameters:
+    def __init__(self,BOFModelParameterID,Name,UnitgroupNumber,PracticeNumber,Type,Value,IsActive,IsDialog,Conversion,Max,Min,Entries):
+        self.BOFModelParameterID = BOFModelParameterID
+        self.Name = Name
+        self.UnitgroupNumber = UnitgroupNumber
+        self.PracticeNumber = PracticeNumber
+        self.Type = Type
+        self.Value = Value
+        self.IsActive = IsActive
+        self.IsDialog = IsDialog
+        self.Conversion = Conversion
+        self.Max = Max
+        self.Min = Min
+        self.Entries = Entries
+class Entries:
+    def __init__(self,BOFModelParameterID=None,Key1=None,Key2=None,Value=None):
+        self.BOFModelParameterID = BOFModelParameterID
+        self.Key1 =Key1
+        self.Key2 = Key2
+        self.Value = Value
+class Material:
+    def __init__(self,Material_ID=None,IsAvailable=None,Groups=None,Type=None,ChemicalEfficiency_perc=None,DisplayName=None,Description=None,Enthalpy_kJ_at1600C=None,Price=None,Density_kg_m3=None,BulkDensity_kg_m3=None,BaseElement=None,Analysis_perc=None):
+        self.Material_ID =Material_ID
+        self.IsAvailable =IsAvailable
+        self.Groups = Groups
+        self.Type = Type
+        self.ChemicalEfficiency_perc = ChemicalEfficiency_perc
+        self.DisplayName = DisplayName
+        self.Description = Description
+        self.Enthalpy_kJ_at1600C = Enthalpy_kJ_at1600C
+        self.Price = Price
+        self.Density_kg_m3 = Density_kg_m3
+        self.BulkDensity_kg_m3 = BulkDensity_kg_m3
+        self.BaseElement = BaseElement
+        self.Analysis_perc = Analysis_perc
+class DynamicClass:
+    def __init__(self, **kwargs):
+        #self.attributes = {}
+        for key, value in kwargs.items():
+            setattr(self, key, value)  # 使用setattr动态设置属性
+            #self.attributes[key] = value  # 也可以存储在一个字典中
+    def Add(self, **kwargs):
+        #self.attributes = {}
+        for key, value in kwargs.items():
+            setattr(self, key, value)  # 使用setattr动态设置属性
+            #self.attributes[key] = value  # 也可以存储在一个字典中        
 # heats = Heats(
 #     MetaInfo=MetaInfo(FileVersion="1.0"),
 #     HeatInfo=HeatInfo(
